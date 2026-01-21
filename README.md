@@ -38,7 +38,7 @@ The API will run on:
 http://localhost:5000
 ```
 
-🗂️ Project Structure
+## 🗂️ Project Structure
 ```text
 advisor-booking-backend/
 ├── routes/
@@ -57,13 +57,13 @@ advisor-booking-backend/
 ├── .gitignore
 └── package.json
 ```
-🔐 Environment Variables
+## 🔐 Environment Variables
 Create a .env file in the project root:
 ```
 PORT=5000
 DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/advisor_booking
 ```
-📡 API Endpoints
+## 📡 API Endpoints
 🔑 Auth Routes
 
 Base URL: /auth
@@ -90,14 +90,14 @@ Logs in an existing user.
   "password": "12345"
 }
 ```
-👨‍🏫 Advisors Routes
+## 👨‍🏫 Advisors Routes
 
 Base URL: /users
 | Method | Endpoint    | Description                            |
 | ------ | ----------- | -------------------------------------- |
 | GET    | `/advisors` | Get all advisors (for dropdown/filter) |
 
-⏱️ Slots Routes
+## ⏱️ Slots Routes
 
 Base URL: /slots
 | Method | Endpoint | Description                               |
@@ -123,7 +123,7 @@ Returns only slots with status "Available".
   "location": "Building A - Office 12"
 }
 ```
-📅 Appointments Routes
+## 📅 Appointments Routes
 
 Base URL: /appointments
 | Method | Endpoint        | Description                   |
