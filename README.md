@@ -39,7 +39,7 @@ http://localhost:5000
 ```
 
 🗂️ Project Structure
-
+```text
 advisor-booking-backend/
 ├── routes/
 │   ├── authRoutes.js           # register & login
@@ -56,7 +56,7 @@ advisor-booking-backend/
 ├── .env                        # environment variables (ignored by git)
 ├── .gitignore
 └── package.json
-
+```
 🔐 Environment Variables
 Create a .env file in the project root:
 ```
