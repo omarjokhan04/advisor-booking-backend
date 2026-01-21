@@ -156,7 +156,7 @@ Cancels a booked appointment:
   
 - Slot status returns to "Available"
 
-🧪 Testing (Postman)
+## 🧪 Testing (Postman)
 All endpoints were tested using Postman after completing the backend.
 
 Recommended order:
