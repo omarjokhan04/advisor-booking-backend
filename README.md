@@ -160,6 +160,7 @@ Cancels a booked appointment:
 All endpoints were tested using Postman after completing the backend.
 
 Recommended order:
+
 1- Register advisor + student
 
 2- Login
