@@ -6,6 +6,7 @@ const pool = require("./db");
 const authRoutes = require("./routes/authRoutes");
 const slotRoutes = require("./routes/slotRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 const PORT = 5000;
@@ -60,6 +61,8 @@ app.get("/tables", async (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/slots", slotRoutes);
 app.use("/appointments", appointmentRoutes);
+app.use("/users", userRoutes);
+
 
 // =========================
 // Start Server
