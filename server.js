@@ -42,6 +42,8 @@ app.get("/tables", async (req, res) => {
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
+const slotRoutes = require("./routes/slotRoutes");
+app.use("/slots", slotRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
