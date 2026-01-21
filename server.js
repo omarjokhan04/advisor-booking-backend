@@ -45,6 +45,10 @@ app.use("/auth", authRoutes);
 const slotRoutes = require("./routes/slotRoutes");
 app.use("/slots", slotRoutes);
 
+const appointmentRoutes = require("./routes/appointmentRoutes");
+app.use("/appointments", appointmentRoutes);
+
+
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
