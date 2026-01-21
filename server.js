@@ -22,7 +22,7 @@ app.get("/db-test", async (req, res) => {
   }
 });
 
-const pool = require("./db");
+
 
 app.get("/tables", async (req, res) => {
   try {
@@ -39,6 +39,8 @@ app.get("/tables", async (req, res) => {
   }
 });
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/auth", authRoutes);
 
 
 app.get("/health", (req, res) => {
