@@ -151,7 +151,9 @@ Marks a booked appointment as Completed.
 
 🔸 PUT /appointments/:id/cancel
 Cancels a booked appointment:
+
 - Appointment status becomes "Canceled"
+  
 - Slot status returns to "Available"
 
 🧪 Testing (Postman)
@@ -159,9 +161,15 @@ All endpoints were tested using Postman after completing the backend.
 
 Recommended order:
 1- Register advisor + student
+
 2- Login
+
 3- Create slots
+
 4- Get slots (filters)
+
 5- Book appointment
+
 6- View student/advisor appointments
+
 7- Complete / Cancel
