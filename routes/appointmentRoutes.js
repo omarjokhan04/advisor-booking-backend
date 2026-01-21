@@ -14,4 +14,7 @@ router.get("/advisor/:id", appointmentController.getAdvisorAppointments);
 // Mark completed (advisor)
 router.put("/:id/complete", appointmentController.completeAppointment);
 
+// Cancel appointment (student or advisor)
+router.put("/:id/cancel", appointmentController.cancelAppointment);
+
 module.exports = router;

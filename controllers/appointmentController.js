@@ -1,7 +1,10 @@
 const pool = require("../db");
 
+// =========================
 // POST /appointments
+// Book appointment (student)
 // body: { slot_id, student_id }
+// =========================
 exports.bookAppointment = async (req, res) => {
   const client = await pool.connect();
   try {
@@ -13,7 +16,7 @@ exports.bookAppointment = async (req, res) => {
 
     await client.query("BEGIN");
 
-    // 1) Lock slot row (prevent double booking)
+    // Lock slot to prevent double booking
     const slotRes = await client.query(
       `SELECT slot_id, advisor_id, slot_date, slot_time, location, status
        FROM advisor_slots
@@ -34,7 +37,7 @@ exports.bookAppointment = async (req, res) => {
       return res.status(400).json({ message: "Slot is not available" });
     }
 
-    // 2) Update slot status -> Booked
+    // Update slot status
     await client.query(
       `UPDATE advisor_slots
        SET status = 'Booked'
@@ -42,7 +45,7 @@ exports.bookAppointment = async (req, res) => {
       [slot_id]
     );
 
-    // 3) Create appointment
+    // Create appointment
     const apptRes = await client.query(
       `INSERT INTO appointments (slot_id, student_id, advisor_id, status)
        VALUES ($1, $2, $3, 'Booked')
@@ -52,7 +55,7 @@ exports.bookAppointment = async (req, res) => {
 
     await client.query("COMMIT");
 
-    // Return helpful data for frontend email
+    // Return data needed by frontend (EmailJS)
     res.status(201).json({
       ...apptRes.rows[0],
       slot_date: slot.slot_date,
@@ -68,7 +71,9 @@ exports.bookAppointment = async (req, res) => {
   }
 };
 
+// =========================
 // GET /appointments/student/:id
+// =========================
 exports.getStudentAppointments = async (req, res) => {
   try {
     const studentId = req.params.id;
@@ -92,7 +97,9 @@ exports.getStudentAppointments = async (req, res) => {
   }
 };
 
+// =========================
 // GET /appointments/advisor/:id
+// =========================
 exports.getAdvisorAppointments = async (req, res) => {
   try {
     const advisorId = req.params.id;
@@ -116,7 +123,9 @@ exports.getAdvisorAppointments = async (req, res) => {
   }
 };
 
+// =========================
 // PUT /appointments/:id/complete
+// =========================
 exports.completeAppointment = async (req, res) => {
   const client = await pool.connect();
   try {
@@ -124,7 +133,6 @@ exports.completeAppointment = async (req, res) => {
 
     await client.query("BEGIN");
 
-    // Lock appointment
     const apptRes = await client.query(
       `SELECT appointment_id, slot_id, status
        FROM appointments
@@ -142,10 +150,11 @@ exports.completeAppointment = async (req, res) => {
 
     if (appt.status !== "Booked") {
       await client.query("ROLLBACK");
-      return res.status(400).json({ message: "Only Booked appointments can be completed" });
+      return res
+        .status(400)
+        .json({ message: "Only Booked appointments can be completed" });
     }
 
-    // Update appointment status
     const updated = await client.query(
       `UPDATE appointments
        SET status = 'Completed', completed_at = NOW()
@@ -154,7 +163,6 @@ exports.completeAppointment = async (req, res) => {
       [appointmentId]
     );
 
-    // Keep slot status in sync
     await client.query(
       `UPDATE advisor_slots
        SET status = 'Completed'
@@ -164,6 +172,63 @@ exports.completeAppointment = async (req, res) => {
 
     await client.query("COMMIT");
     res.json(updated.rows[0]);
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.log("APPOINTMENT ERROR:", err.message);
+    res.status(500).json({ message: "Server error" });
+  } finally {
+    client.release();
+  }
+};
+
+// =========================
+// PUT /appointments/:id/cancel
+// =========================
+exports.cancelAppointment = async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const appointmentId = req.params.id;
+
+    await client.query("BEGIN");
+
+    const apptRes = await client.query(
+      `SELECT appointment_id, slot_id, status
+       FROM appointments
+       WHERE appointment_id = $1
+       FOR UPDATE`,
+      [appointmentId]
+    );
+
+    if (apptRes.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    const appt = apptRes.rows[0];
+
+    if (appt.status !== "Booked") {
+      await client.query("ROLLBACK");
+      return res
+        .status(400)
+        .json({ message: "Only Booked appointments can be canceled" });
+    }
+
+    await client.query(
+      `UPDATE appointments
+       SET status = 'Canceled'
+       WHERE appointment_id = $1`,
+      [appointmentId]
+    );
+
+    await client.query(
+      `UPDATE advisor_slots
+       SET status = 'Available'
+       WHERE slot_id = $1`,
+      [appt.slot_id]
+    );
+
+    await client.query("COMMIT");
+    res.json({ message: "Appointment canceled successfully" });
   } catch (err) {
     await client.query("ROLLBACK");
     console.log("APPOINTMENT ERROR:", err.message);
