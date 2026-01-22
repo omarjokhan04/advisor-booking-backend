@@ -13,15 +13,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-// =========================
+
 // Middlewares
-// =========================
 app.use(cors());
 app.use(express.json());
 
-// =========================
+
 // Basic Routes (quick checks)
-// =========================
 app.get("/", (req, res) => {
   res.send("Advisor Booking Backend API is running");
 });
@@ -30,7 +28,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// (Optional) DB quick test
+// DB quick test
 app.get("/db-test", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW() as current_time");
@@ -41,7 +39,7 @@ app.get("/db-test", async (req, res) => {
   }
 });
 
-// (Optional) Show tables
+// Show tables
 app.get("/tables", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -57,18 +55,16 @@ app.get("/tables", async (req, res) => {
   }
 });
 
-// =========================
+
 // API Routes
-// =========================
 app.use("/auth", authRoutes);
 app.use("/slots", slotRoutes);
 app.use("/appointments", appointmentRoutes);
 app.use("/users", userRoutes);
 
 
-// =========================
 // Start Server
-// =========================
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
